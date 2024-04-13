@@ -48,24 +48,49 @@ hashing = keccak.new(digest_bits=256)
 hashing.update(bytes(text_to_sign, "UTF-8"))
 hashed = int.from_bytes(hashing.digest(), "big" ) % curve_order
 
-## G2 signature
+## G1 signature
 
-alice_signature = multiply(G2, alice_secret_key * hashed)
-bob_signature = multiply(G2, bob_secret_key * hashed)
+alice_signature = multiply(G1, alice_secret_key * hashed)
+bob_signature = multiply(G1, bob_secret_key * hashed)
 
-print("Alice G2 Signature:", alice_signature)
-print("Bob G2 Signature:", bob_signature)
+print("Alice G1 Signature:", alice_signature)
+print("Bob G1 Signature:", bob_signature)
 
 apk_signature = add(alice_signature, bob_signature)
 
-print("APK G2 Signature:", apk_signature)
+print("APK G1 Signature:", apk_signature)
 
 
 print("\n----------------------\nSignature verification\n----------------------")
 
-hash_G2 = multiply(G2, hashed)
+hash_G1 = multiply(G1, hashed)
 
-# e([1]_1, [sk * H]_2) == e([sk]_1, [H]_2)
-signature_result = pairing(apk_signature, G1) == pairing(hash_G2, apk_G1)
+# e([sk * H]_1, [1]_2) == e([H]_1, [sk]_2)
+signature_result = pairing(G2, apk_signature) == pairing(apk_G2, hash_G1)
+
 
 print("Signature is valid?", signature_result)
+
+
+print("\n----------------------\nSolidity variables\n----------------------")
+
+print("Import the following variables in `bn128-solidity/test/BN128.t.sol`:\n")
+
+print(f"""
+    // G1 Aggregated Pubkey
+    uint256 xPubKeyG1 = { apk_G1[0] };
+    uint256 yPubKeyG1 = { apk_G1[1] };
+    // G2 Aggregated Pubkey
+    uint256 x1PubKeyG2 = { apk_G2[0].coeffs[1] };
+    uint256 x0PubKeyG2 = { apk_G2[0].coeffs[0] };
+    uint256 y1PubKeyG2 = { apk_G2[1].coeffs[1] };
+    uint256 y0PubKeyG2 = { apk_G2[1].coeffs[0] };
+
+    // G1 Aggregated signature
+    uint256 xSignatureG1 = { apk_signature[0] };
+    uint256 ySignatureG1 = { apk_signature[1] };
+    uint256 sigHash = { int.from_bytes(hashing.digest(), "big" ) };
+""")
+
+
+

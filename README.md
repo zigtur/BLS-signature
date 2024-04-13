@@ -133,7 +133,7 @@ Requirements:
 pip3 install py_ecc pycryptodome
 ```
 
-Two python scripts are available:
+Python scripts are available:
 - [`bls-signature.py`](./bn128-python/bls-signature.py): uses the BLS signature scheme of py_ecc
 - [`bn128_bls-signature.py`](./bn128-python/bn128_bls-signature.py): implements its own BLS signature algorithm, with G1 signature and G2 pubkey for verification
 - [`bn128_bls-multisig.py`](./bn128-python/bn128_bls-multisig.py): implements its own BLS multisignature scheme, with G2 signature and G1 pubkey for verification
@@ -141,14 +141,21 @@ Two python scripts are available:
 
 #### Solidity example
 
-*Note: TODO*
+:warning: *Please note that the Solidity example doesn't implement the hashing of input parameters, it only verifies that the provided signature matches the provided pubkey.
+The code **must not be used in production**.* :warning:
 
 A Solidity example[^9] is available.
+
+[`bn128_bls-multisignature-solidity-args.py`](./bn128-python/bn128_bls-multisig-handling-nonsigners.py) is a python script that generates a G1 aggregated signature and print the G1 and G2 aggregated public keys.
+These can be imported in [`BN128.t.sol`](./bn128-solidity/test/BN128.t.sol) to verify the signature with Solidity.
+
+This Solidity example uses Ethereum precompiled contracts[^10] to verify the BLS signature.
 
 It is based on Foundry.
 
 Requirements:
 ```bash
+cd bn128-solidity
 # Install Foundry
 curl -L https://foundry.paradigm.xyz | bash
 # Update Foundry

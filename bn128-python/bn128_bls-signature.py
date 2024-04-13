@@ -1,4 +1,4 @@
-from py_ecc.optimized_bn128 import FQ, FQ2, FQ12, G1, G2, add, curve_order, is_on_curve, multiply, neg, pairing
+from py_ecc.bn128 import FQ, FQ2, FQ12, G1, G2, add, curve_order, is_on_curve, multiply, neg, pairing
 from Crypto.Hash import SHA3_256
 
 print("----------------------\nIntroduction\n----------------------")
